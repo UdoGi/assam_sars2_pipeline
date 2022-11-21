@@ -1,0 +1,14 @@
+*.fa
+*.fastq
+*.fasta
+*.qual.txt
+*.done
+*.csv
+*.html
+.idea
+.snakemake
+logs
+multiqc_data
+bowtie2
+fastp
+adapter_removal

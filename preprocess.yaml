@@ -1,0 +1,6 @@
+channels:
+  - bioconda
+dependencies:
+  - multiqc=1.13
+  - fastp=0.23.2
+  - adapterremoval=2.3.3
