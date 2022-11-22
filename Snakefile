@@ -1,22 +1,11 @@
 from pathlib import Path
 raw_data_dir=Path(config['path_to_samples']).resolve().absolute()
-# print(raw_data_dir)
 fq_paths=list(raw_data_dir.glob('*.fastq.gz'))
-# print(fq_paths)
 all_samples = [p.stem.split('_R1')[0] for p in fq_paths if "_R1" in p.stem]
 all_samples = [e for e in all_samples if 'Undetermined' not in e]
-# print(fq_paths)
-print(len(all_samples))
-print(all_samples[:2])
 
 rule all:
     input:
-        # fastp=[f'fastp/{sample}_singletons.fastp.fastq.gz' for sample in all_samples[:]],
-        # fastp=[f'fastp/{sample}.fastp.json' for sample in all_samples[:]],
-        #  "multiqc_report.html"
-        # db="bowtie2/bowtie2_db/sars2_ref.1.bt2",
-        # bam=['bowtie2/data/'  + f"{sample}_no_clip.bam" for sample in all_samples[:]]
-        # [ f"{sample}_consensus.fasta" for sample in all_samples]
         [ f"{sample}.consensus.done" for sample in all_samples]
 
 rule adapter_removal:
@@ -45,8 +34,6 @@ rule fastp:
     input:
         R1=str(raw_data_dir) + "/{sample}_R1_001.fastq.gz",
         R2=str(raw_data_dir) + "/{sample}_R2_001.fastq.gz",
-        # R1='adapter_removal/' + '{sample}_R1_trimmed.fastq.gz',
-        # R2='adapter_removal/' + '{sample}_R2_trimmed.fastq.gz',
     output:
         R1="fastp" + "/{sample}_R1.fastp.fastq.gz",
         R2='fastp' + "/{sample}_R2.fastp.fastq.gz",
@@ -104,7 +91,6 @@ rule make_bowtie2_db:
     output:
         "bowtie2/bowtie2_db/sars2_ref.1.bt2"
     conda:
-        # "/Users/udo/opt/miniconda3/envs/darkmatter/"
         'alignment_consensus.yaml'
     log:
         stdout="logs/make_bowtie2_db/stdout.log",
@@ -152,7 +138,6 @@ rule make_consensus:
         bam='bowtie2/data/'  + "{sample}_no_clip.bam",
         bai='bowtie2/data/' + "{sample}_no_clip.bam.bai",
     output:
-        # fasta="{sample}_consensus.fasta"
         touch("{sample}.consensus.done")
     conda:
         'alignment_consensus.yaml'
@@ -165,22 +150,4 @@ rule make_consensus:
         4
     shell:
         "samtools mpileup -aa -A -d 0 -Q 0 {input.bam} | ivar consensus -p {params.prefix} > {log.stdout} 2> {log.stderr}; "
-
-
-# rule pangolineage:
-#     input:
-#         fasta='consensus/' + "{sample}_consensus.fasta"
-#     output:
-#         csv='pangolineage' + "{sample}_pangolineage.csv"
-#     # conda:
-#     #     'alignment_consensus.yaml'
-#     log:
-#         stdout="logs/pangolineage/{sample}.stdout.log",
-#         stderr="logs/pangolineage/{sample}.stderr.log"
-    # params:
-    #     prefix= lambda wildcards: f"{wildcards.sample}_consensus"
-    # threads:
-    #     4
-    # shell:
-    #     "samtools mpileup -aa -A -d 0 -Q 0 {input.bam} | ivar consensus -p {params.prefix} > {log.stdout} 2> {log.stderr} "
 

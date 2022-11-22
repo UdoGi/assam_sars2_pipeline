@@ -1,9 +1,6 @@
 channels:
   - bioconda
-  - conda-forge
-  - defaults
 dependencies:
   - bowtie2
   - ivar
   - samtools
-  - pangolin

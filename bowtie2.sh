@@ -1,5 +1,5 @@
 MN908947.3
-
+# this downloads the reference
 wget -O sars2_ref.fasta https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi\?db\=nucleotide\&id\=MN908947.3\&rettype\=fasta\&retmode\=text
 
 mamba env create -f alignment_consensus.yaml --name alignment_consensus_india
